@@ -1,4 +1,7 @@
-﻿public interface IExecutable
+﻿/*
+ * IExecutable objects perform logic on a level.
+ */
+public interface IExecutable
 {
-    bool Execute();
+    bool Execute(Level level);
 }
