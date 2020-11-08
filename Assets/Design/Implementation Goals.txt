@@ -1,0 +1,2 @@
+﻿[✔] Implement the Spawn command
+[ ] Implement the Group command

@@ -5,12 +5,14 @@ The user spawns sprites and manipulates them before the level is over.
 
 Commands:
 	//			comment (ignore rest of line)
+	group		create a new alias for a group of actors
 	spawn		spawn a new actor with specified sprite and name
 	despawn		despawn an existing actor
+	parent		specify actor's parent
 	show		show an actor's sprite
 	hide		hide an actor's sprite
-	group		create a new alias for a group of actors
 	flash		flashes the actor's sprite
+	color		specify actor's color
 	anchor		define a position
 	move		moves the actor
 	rotate		rotates the actor
