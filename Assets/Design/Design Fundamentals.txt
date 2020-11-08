@@ -1,0 +1,28 @@
+Tool to create animated FFXIV Diagrams.
+Starts with a splash screen displaying the level's name and creator.
+The user specifies multiple levels to be displayed in succession.
+The user spawns sprites and manipulates them before the level is over.
+
+Commands:
+	//			comment (ignore rest of line)
+	spawn		spawn a new actor with specified sprite and name
+	despawn		despawn an existing actor
+	show		show an actor's sprite
+	hide		hide an actor's sprite
+	group		create a new alias for a group of actors
+	flash		flashes the actor's sprite
+	anchor		define a position
+	move		moves the actor
+	rotate		rotates the actor
+	scale		changes the actor's scale
+	target		fixes the actor's rotation to look at an actor
+	untarget	unfixes the actor's rotation
+	buff		add buff to actor
+	debuff		remove buff from actor
+	tether		spawn tether between two actors
+	untether	break tether between two actors
+	wait		waits some amount of seconds
+	waitfor		waits until an actor or actor group has finished animating
+	waituser	waits for user input
+
+User loads sprites locally.
