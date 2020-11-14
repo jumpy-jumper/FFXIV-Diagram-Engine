@@ -98,45 +98,14 @@ public class Level : MonoBehaviour
 
     void BuildTests()
     {
-        SpawnCommand s1 = new SpawnCommand();
-        s1.name = "T1";
-        s1.spritePath = "Sprites/Jobs/GNB";
-        commands.Enqueue(s1);
-
-        SpawnCommand s2 = new SpawnCommand();
-        s2.name = "T2";
-        s2.spritePath = "Sprites/Jobs/PLD";
-        commands.Enqueue(s2);
-
+        commands.Enqueue(new SpawnCommand("T1", "Sprites/Jobs/GNB"));
+        commands.Enqueue(new SpawnCommand("T2", "Sprites/Jobs/PLD"));
         commands.Enqueue(new WaitForInputCommand());
-
-        MoveCommand m1 = new MoveCommand();
-        m1.label = "T1";
-        m1.movementType = Moveable.MovementType.Duration;
-        m1.target = new Vector2(-5, -1);
-        m1.timeFactor = 0.3f;
-        commands.Enqueue(m1);
-
-        MoveCommand m2 = new MoveCommand();
-        m2.label = "T2";
-        m2.movementType = Moveable.MovementType.Duration;
-        m2.target = new Vector2(2, 1);
-        m2.timeFactor = 0.3f;
-        commands.Enqueue(m2);
-
-        GroupCommand g1 = new GroupCommand();
-        g1.label = "tanks";
-        g1.names = new List<string>() { "T1", "T2" };
-        commands.Enqueue(g1);
-
+        commands.Enqueue(new MoveCommand("T1", Moveable.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
+        commands.Enqueue(new MoveCommand("T2", Moveable.MovementType.Duration, 0.3f, new Vector2(2, 1)));
+        commands.Enqueue(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
         commands.Enqueue(new WaitForInputCommand());
-
-        MoveCommand m3 = new MoveCommand();
-        m3.label = "tanks";
-        m3.movementType = Moveable.MovementType.Duration;
-        m3.target = Vector2.zero;
-        m3.timeFactor = 0.3f;
-        commands.Enqueue(m3);
+        commands.Enqueue(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, Vector2.zero));
     }
 
 }

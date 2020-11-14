@@ -3,10 +3,18 @@ using UnityEngine;
 
 public class MoveCommand : IExecutable
 {
-    public string label;
-    public Moveable.MovementType movementType;
-    public float timeFactor;
-    public Vector2 target;
+    readonly string label;
+    readonly Moveable.MovementType movementType;
+    readonly float timeFactor;
+    readonly Vector2 target;
+
+    public MoveCommand(string label, Moveable.MovementType movementType, float timeFactor, Vector2 target)
+    {
+        this.label = label;
+        this.movementType = movementType;
+        this.timeFactor = timeFactor;
+        this.target = target;
+    }
 
     public bool Execute(Level level)
     {                                                                 
