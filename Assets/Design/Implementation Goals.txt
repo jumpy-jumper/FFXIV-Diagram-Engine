@@ -6,10 +6,8 @@ a list of commands, supporting undo functionality.
 	[x] spawn
 	[x] despawn
 	[ ] parent
-	[ ] show
-	[ ] hide
 	[ ] flash
-	[ ] color
+	[x] color
 	[ ] anchor
 	[x] move
 	[ ] rotate

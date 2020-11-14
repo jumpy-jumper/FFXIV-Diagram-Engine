@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Stage : MonoBehaviour
 {
@@ -16,7 +17,15 @@ public class Stage : MonoBehaviour
 
         if (groups.ContainsKey(name))
         {
-            return groups[name];
+            List<Actor> ret = new List<Actor>();
+            foreach (Actor groupMember in groups[name])
+            {
+                if (groupMember && groupMember.gameObject.activeSelf)
+                {
+                    ret.Add(groupMember);
+                }
+            }
+            return ret;
         }
 
         Debug.LogError("Get Actors: Actor with name \"" + name + "\" or in group \"" + name + "\" not found");
@@ -80,9 +89,6 @@ public class Stage : MonoBehaviour
 
         BuildTests();
 
-        // The stage always ends with a wait for input command before restarting
-        // the scene.
-        commands.AddLast(new WaitForInputCommand());
         commands.AddLast(new RestartSceneCommand());
     }
 
@@ -99,30 +105,19 @@ public class Stage : MonoBehaviour
             {
                 inputWait = false;
             }
+        }
 
-            // Z or right click undos until the last WaitForInputCommand
-            if ((Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(1)) && curCommand != commands.First)
-            {
-                do
-                {
-                    curCommand.Previous.Value.Reverse(this);
-                    curCommand = curCommand.Previous;
-                } while (curCommand.Previous != null && curCommand.Previous.Value.GetType() != typeof(WaitForInputCommand));
-            }
-
-            // Left arrow undos a single command
-            else if (Input.GetKeyDown(KeyCode.LeftArrow) && curCommand != commands.First)
-            {
-                curCommand.Previous.Value.Reverse(this);
-                curCommand = curCommand.Previous;
-            }
-
-            // Right arrow advances a single command;
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                curCommand.Value.Execute(this);
-                curCommand = curCommand.Next;
-            }
+        if ((Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(1)))
+        {
+            UndoSnippet();
+        }
+        else if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            UndoSingle();
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            AdvanceSingle();
         }
 
         // Process commands until wait is issued
@@ -131,6 +126,39 @@ public class Stage : MonoBehaviour
             curCommand.Value.Execute(this);
             curCommand = curCommand.Next;
         }
+    }
+
+    // A "snippet" is a section of commands bound by WaitForInput commands
+    public void UndoSnippet()
+    {
+        if (curCommand != commands.First)
+        {
+            do
+            {
+                curCommand.Previous.Value.Reverse(this);
+                curCommand = curCommand.Previous;
+            } while (curCommand.Previous != null && curCommand.Previous.Value.GetType() != typeof(WaitForInputCommand));
+        }
+    }
+
+    public void UndoSingle()
+    {
+        if (curCommand != commands.First)
+        {
+            curCommand.Previous.Value.Reverse(this);
+            curCommand = curCommand.Previous;
+        }
+    }
+
+    public void AdvanceSingle()
+    {
+        curCommand.Value.Execute(this);
+        curCommand = curCommand.Next;
+    }
+
+    public void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     void BuildTests()
@@ -143,7 +171,14 @@ public class Stage : MonoBehaviour
         commands.AddLast(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
         commands.AddLast(new WaitForInputCommand());
         commands.AddLast(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(3, 0)));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new DespawnCommand("T1"));
+        commands.AddLast(new SpawnCommand("H1", "Sprites/Jobs/WHM"));
+        commands.AddLast(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(-1, -1)));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new ColorCommand("T2", Color.red));
+        commands.AddLast(new ColorCommand("H1", Color.blue));
+        commands.AddLast(new WaitForInputCommand());
         curCommand = commands.First;
     }
-
 }
