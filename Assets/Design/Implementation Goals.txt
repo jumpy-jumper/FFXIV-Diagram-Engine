@@ -1,2 +1,34 @@
-﻿[✔] Implement the Spawn command
-[ ] Implement the Group command
+﻿Stage 1. Commands Implementation
+	Implement the stage game object which executes
+a list of commands, supporting undo functionality.
+	[ ] splash (complete the startup splash screen animation)
+	[x] group
+	[x] spawn
+	[ ] despawn
+	[ ] parent
+	[ ] show
+	[ ] hide
+	[ ] flash
+	[ ] color
+	[ ] anchor
+	[x] move
+	[ ] rotate
+	[ ] scale
+	[ ] target
+	[ ] untarget
+	[ ] buff
+	[ ] debuff
+	[ ] tether
+	[ ] untether
+	[x] wait
+	[ ] waitfor
+	[x] waitseconds
+
+Stage 2. Interpreter Implementation
+	Implement an interpreter which reads a text file
+and creates the appropriate stack of commands
+
+Stage 3. GUI Implementation
+	Implement a GUI which allows the user to interactively
+create stages to be saved to a text file to be later 
+interpreted

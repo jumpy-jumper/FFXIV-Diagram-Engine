@@ -23,8 +23,8 @@ Commands:
 	debuff		remove buff from actor
 	tether		spawn tether between two actors
 	untether	break tether between two actors
-	wait		waits some amount of seconds
+	wait		waits for user input
 	waitfor		waits until an actor or actor group has finished animating
-	waituser	waits for user input
+	waitseconds	waits some amount of seconds
 
 User loads sprites locally.
