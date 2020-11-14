@@ -4,7 +4,7 @@ a list of commands, supporting undo functionality.
 	[ ] splash (complete the startup splash screen animation)
 	[x] group
 	[x] spawn
-	[ ] despawn
+	[x] despawn
 	[ ] parent
 	[ ] show
 	[ ] hide
