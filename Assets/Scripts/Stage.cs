@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Stage : MonoBehaviour
 {
@@ -88,8 +87,6 @@ public class Stage : MonoBehaviour
         curCommand = null;
 
         BuildTests();
-
-        commands.AddLast(new RestartSceneCommand());
     }
 
     void Update()
@@ -121,7 +118,7 @@ public class Stage : MonoBehaviour
         }
 
         // Process commands until wait is issued
-        while (!Waiting)
+        while (!Waiting && curCommand != null)
         {
             curCommand.Value.Execute(this);
             curCommand = curCommand.Next;
@@ -135,9 +132,11 @@ public class Stage : MonoBehaviour
         {
             do
             {
-                curCommand.Previous.Value.Reverse(this);
-                curCommand = curCommand.Previous;
+                LinkedListNode<IExecutable> previous = (curCommand == null ? commands.Last : curCommand.Previous);
+                previous.Value.Reverse(this);
+                curCommand = previous;
             } while (curCommand.Previous != null && curCommand.Previous.Value.GetType() != typeof(WaitForInputCommand));
+            inputWait = true;
         }
     }
 
@@ -145,46 +144,30 @@ public class Stage : MonoBehaviour
     {
         if (curCommand != commands.First)
         {
-            curCommand.Previous.Value.Reverse(this);
-            curCommand = curCommand.Previous;
+            LinkedListNode<IExecutable> previous = (curCommand == null ? commands.Last : curCommand.Previous);
+            previous.Value.Reverse(this);
+            curCommand = previous;
+            inputWait = true;
         }
     }
 
     public void AdvanceSingle()
     {
-        curCommand.Value.Execute(this);
-        curCommand = curCommand.Next;
-    }
-
-    public void ReloadScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (curCommand != commands.Last)
+        {
+            curCommand.Value.Execute(this);
+            curCommand = curCommand.Next;
+        }
     }
 
     void BuildTests()
     {
+        commands.AddLast(new WaitForInputCommand());
         commands.AddLast(new SpawnCommand("T1", "Sprites/Jobs/GNB"));
         commands.AddLast(new SpawnCommand("T2", "Sprites/Jobs/PLD"));
-        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new WaitForInputCommand()); 
         commands.AddLast(new MoveCommand("T1", PositionController.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
         commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(2, 1)));
-        commands.AddLast(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
-        commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new MoveCommand("tanks", PositionController.MovementType.Duration, 0.3f, new Vector2(3, 0)));
-        commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new DespawnCommand("T1"));
-        commands.AddLast(new SpawnCommand("H1", "Sprites/Jobs/WHM"));
-        commands.AddLast(new MoveCommand("tanks", PositionController.MovementType.Duration, 0.3f, new Vector2(-1, -1)));
-        commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new ColorCommand("T2", Color.red));
-        commands.AddLast(new ColorCommand("H1", Color.blue));
-        commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new LockCommand("H1", "T2", new Vector2(2, 1)));
-        commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(0, 3)));
-        commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new UnlockCommand("H1"));
-        commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(0, -3)));
-        commands.AddLast(new WaitForInputCommand());
         curCommand = commands.First;
     }
 }
