@@ -2,5 +2,11 @@
 
 public class Actor : MonoBehaviour
 {
-    public bool IsAnimating { get => false; }
+    Moveable moveableComponent;
+    public bool IsAnimating { get => moveableComponent.IsMoving; }
+
+    void Awake()
+    {
+        moveableComponent = GetComponent<Moveable>();
+    }
 }

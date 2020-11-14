@@ -41,7 +41,7 @@ public class GroupCommand : IExecutable
         List<Actor> actors = level.GetActors(names);
         if (actors == null)
         {
-            Debug.LogError("Group Command: Level returned null list.");
+            Debug.LogError("Group Command: Level returned null list");
             return false;
         }
 

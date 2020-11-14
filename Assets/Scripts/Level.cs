@@ -6,6 +6,22 @@ public class Level : MonoBehaviour
     // Actor tracking
     public List<Actor> actors = new List<Actor>();
     public Dictionary<string, List<Actor>> groups = new Dictionary<string, List<Actor>>();
+    public List<Actor> GetActors(string name)
+    {
+        Actor actor = actors.Find(a => a.name == name);
+        if (actor)
+        {
+            return new List<Actor>() { actor };
+        }
+
+        if (groups.ContainsKey(name))
+        {
+            return groups[name];
+        }
+
+        Debug.LogError("Get Actors: Actor with name \"" + name + "\" or in group \"" + name + "\" not found");
+        return null;
+    }
     public List<Actor> GetActors(List<string> names)
     {
         List<Actor> ret = new List<Actor>();
@@ -54,18 +70,51 @@ public class Level : MonoBehaviour
 
     // Commands
     public Queue<IExecutable> commands = new Queue<IExecutable>();
-    public Stack<IExecutable> history = new Stack<IExecutable>();
-
-    // Testing
-    public Queue<ITestable> tests = new Queue<ITestable>();
-    ITestable curTest;
 
     void Start()
     {
         inputWait = false;
         secondsWait = 0;
 
-        tests.Enqueue(new ScratchTest());
+        BuildTest();
+    }
+
+    void BuildTest()
+    {
+        SpawnCommand s1 = new SpawnCommand();
+        s1.name = "T1";
+        s1.spritePath = "Sprites/Jobs/GNB";
+        commands.Enqueue(s1);
+
+        SpawnCommand s2 = new SpawnCommand();
+        s2.name = "T2";
+        s2.spritePath = "Sprites/Jobs/PLD";
+        commands.Enqueue(s2);
+
+        MoveCommand m1 = new MoveCommand();
+        m1.label = "T1";
+        m1.movementType = Moveable.MovementType.Instant;
+        m1.target = new Vector2(-2, 1);
+        commands.Enqueue(m1);
+
+        MoveCommand m2 = new MoveCommand();
+        m2.label = "T2";
+        m2.movementType = Moveable.MovementType.Instant;
+        m2.target = new Vector2(2, 1);
+        commands.Enqueue(m2);
+
+        GroupCommand g1 = new GroupCommand();
+        g1.label = "tanks";
+        g1.names = new List<string>() { "T1", "T2" };
+        commands.Enqueue(g1);
+
+        commands.Enqueue(new WaitForInputCommand());
+
+        MoveCommand m3 = new MoveCommand();
+        m3.label = "tanks";
+        m3.movementType = Moveable.MovementType.Instant;
+        m3.target = Vector2.zero;
+        commands.Enqueue(m3);
     }
 
     void Update()
@@ -82,18 +131,6 @@ public class Level : MonoBehaviour
         {
             IExecutable command = commands.Dequeue();
             command.Execute(this);
-            history.Push(command);
-        }
-
-        // If testing done, check and start a new test
-        if (commands.Count == 0 && tests.Count > 0)
-        {
-            if (curTest != null)
-            {
-                curTest.Check(this);
-            }
-            curTest = tests.Dequeue();
-            curTest.Build(this);
         }
     }
 }
