@@ -2,11 +2,11 @@
 
 public class Actor : MonoBehaviour
 {
-    Moveable moveableComponent;
+    PositionController moveableComponent;
     public bool IsAnimating { get => moveableComponent.IsMoving; }
 
     void Awake()
     {
-        moveableComponent = GetComponent<Moveable>();
+        moveableComponent = GetComponent<PositionController>();
     }
 }

@@ -1,13 +1,21 @@
 ﻿using UnityEngine;
 
-public class Moveable : MonoBehaviour
+public class PositionController : MonoBehaviour
 {
-    bool isMoving;
+    public GameObject parent = null;
+    public Vector2 offset;
 
+    bool isMoving;
     float speed;
     Vector2 target;
+
     void Update()
     {
+        if (parent)
+        {
+            transform.position = parent.transform.position + (Vector3)offset;
+        }
+
         if (isMoving)
         {
             transform.position = Vector2.MoveTowards(transform.position, target, speed * Time.deltaTime);
@@ -18,6 +26,11 @@ public class Moveable : MonoBehaviour
     public enum MovementType { Instant, Speed, Duration }
     public void Move(MovementType movementType, float timeFactor, Vector2 target)
     {
+        if (parent)
+        {
+            return;
+        }
+
         switch (movementType)
         {
             case MovementType.Instant:
@@ -34,6 +47,17 @@ public class Moveable : MonoBehaviour
                 this.target = target;
                 break;
         }
+    }
+
+    public void Lock(GameObject obj, Vector2 offset)
+    {
+        parent = obj;
+        this.offset = offset;
+    }
+
+    public void Unlock()
+    {
+        parent = null;
     }
 
     public bool IsMoving { get => isMoving; }

@@ -166,18 +166,24 @@ public class Stage : MonoBehaviour
         commands.AddLast(new SpawnCommand("T1", "Sprites/Jobs/GNB"));
         commands.AddLast(new SpawnCommand("T2", "Sprites/Jobs/PLD"));
         commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new MoveCommand("T1", Moveable.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
-        commands.AddLast(new MoveCommand("T2", Moveable.MovementType.Duration, 0.3f, new Vector2(2, 1)));
+        commands.AddLast(new MoveCommand("T1", PositionController.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
+        commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(2, 1)));
         commands.AddLast(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
         commands.AddLast(new WaitForInputCommand());
-        commands.AddLast(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(3, 0)));
+        commands.AddLast(new MoveCommand("tanks", PositionController.MovementType.Duration, 0.3f, new Vector2(3, 0)));
         commands.AddLast(new WaitForInputCommand());
         commands.AddLast(new DespawnCommand("T1"));
         commands.AddLast(new SpawnCommand("H1", "Sprites/Jobs/WHM"));
-        commands.AddLast(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(-1, -1)));
+        commands.AddLast(new MoveCommand("tanks", PositionController.MovementType.Duration, 0.3f, new Vector2(-1, -1)));
         commands.AddLast(new WaitForInputCommand());
         commands.AddLast(new ColorCommand("T2", Color.red));
         commands.AddLast(new ColorCommand("H1", Color.blue));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new LockCommand("H1", "T2", new Vector2(2, 1)));
+        commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(0, 3)));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new UnlockCommand("H1"));
+        commands.AddLast(new MoveCommand("T2", PositionController.MovementType.Duration, 0.3f, new Vector2(0, -3)));
         commands.AddLast(new WaitForInputCommand());
         curCommand = commands.First;
     }

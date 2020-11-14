@@ -5,13 +5,14 @@ a list of commands, supporting undo functionality.
 	[x] group
 	[x] spawn
 	[x] despawn
-	[ ] parent
 	[ ] flash
 	[x] color
 	[ ] anchor
 	[x] move
 	[ ] rotate
 	[ ] scale
+	[x] lock
+	[x] unlock
 	[ ] target
 	[ ] untarget
 	[ ] buff

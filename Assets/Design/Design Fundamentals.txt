@@ -8,7 +8,8 @@ Commands:
 	group		create a new alias for a group of actors
 	spawn		spawn a new actor with specified sprite and name
 	despawn		despawn an existing actor
-	parent		specify actor's parent
+	lock		lock actor's position to another actor's, with offset
+	unlock		unlock the actor's position
 	show		show an actor's sprite
 	hide		hide an actor's sprite
 	flash		flashes the actor's sprite
