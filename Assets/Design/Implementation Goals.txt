@@ -26,7 +26,7 @@ a list of commands, supporting undo functionality.
 
 Stage 2. Interpreter Implementation
 	Implement an interpreter which reads a text file
-and creates the appropriate stack of commands
+and creates the appropriate list of commands
 
 Stage 3. GUI Implementation
 	Implement a GUI which allows the user to interactively

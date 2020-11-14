@@ -4,8 +4,7 @@ using UnityEngine.UI;
 public class StageCommandsPeeker : MonoBehaviour
 {
     public Stage stage;
-    public enum WhatToPrint { Queue, History }
-    public WhatToPrint whatToPrint;
+    public Color currentCommandColor;
 
     Text text;
     void Awake()
@@ -15,30 +14,13 @@ public class StageCommandsPeeker : MonoBehaviour
 
     void Update()
     {
-        switch (whatToPrint)
+        text.text = "";
+
+        foreach (IExecutable command in stage.commands)
         {
-            case WhatToPrint.Queue:
-                text.text = "<b>Command Stack</b>\n\n";
-                foreach (IExecutable command in stage.commands)
-                {
-                    text.text += command.GetType().ToString() + "\n";
-                    if (command.GetType() == typeof(WaitForInputCommand))
-                    {
-                        text.text += "\n";
-                    }
-                }
-                break;
-            case WhatToPrint.History:
-                text.text = "<b>Command History</b>\n\n";
-                foreach (IExecutable command in stage.history)
-                {
-                    if (command.GetType() == typeof(WaitForInputCommand))
-                    {
-                        text.text += "\n";
-                    }
-                    text.text += command.GetType().ToString() + "\n";
-                }
-                break;
+            if (stage.curCommand?.Value == command) text.text += $"<color=#{ColorUtility.ToHtmlStringRGBA(currentCommandColor)}>";
+            text.text += command.GetType().ToString().Replace("Command", "") + "\n";
+            if (stage.curCommand?.Value == command) text.text += "</color>";
         }
     }
 }

@@ -69,90 +69,81 @@ public class Stage : MonoBehaviour
     public float secondsWait;
 
     // Commands
-    public Stack<IExecutable> commands = new Stack<IExecutable>();
-    public Stack<IExecutable> history = new Stack<IExecutable>();
+    public LinkedList<IExecutable> commands = new LinkedList<IExecutable>();
+    public LinkedListNode<IExecutable> curCommand;
 
     void Start()
     {
-        actors.Clear();
-        groups.Clear();
-
         inputWait = false;
         secondsWait = 0;
+        curCommand = null;
 
-        commands.Clear();
-        commands.Push(new WaitForInputCommand());
         BuildTests();
 
-        history.Clear();
+        // The stage always ends with a wait for input command before restarting
+        // the scene.
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new RestartSceneCommand());
     }
 
     void Update()
     {
-        // Advance waiting logic
+        // Advance waiting state
         secondsWait -= Time.deltaTime;
+
+        // Process user input
         if (inputWait)
         {
+            // Space key or mouse click advance the stage
             if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
             {
                 inputWait = false;
+            }
 
-                // If no more commands left to execute, restart stage
-                if (commands.Count == 0)
+            // Z or right click undos until the last WaitForInputCommand
+            if ((Input.GetKeyDown(KeyCode.Z) || Input.GetMouseButtonDown(1)) && curCommand != commands.First)
+            {
+                do
                 {
-                    Undo(UndoType.All);
-                    Start();
-                }
+                    curCommand.Previous.Value.Reverse(this);
+                    curCommand = curCommand.Previous;
+                } while (curCommand.Previous != null && curCommand.Previous.Value.GetType() != typeof(WaitForInputCommand));
             }
-            else if (history.Count > 0 && Input.GetKeyDown(KeyCode.Z))
+
+            // Left arrow undos a single command
+            else if (Input.GetKeyDown(KeyCode.LeftArrow) && curCommand != commands.First)
             {
-                Undo(UndoType.UntilWaitForInputCommand);
+                curCommand.Previous.Value.Reverse(this);
+                curCommand = curCommand.Previous;
             }
-        }
 
-        // Process commands until wait is issued or there are no more commands
-        while (!Waiting && commands.Count > 0)
-        {
-            IExecutable command = commands.Pop();
-            command.Execute(this);
-            history.Push(command);
-        }
-    }
-
-    enum UndoType { Single, UntilWaitForInputCommand, All }
-    void Undo(UndoType undoType)
-    {
-        bool ShouldStop()
-        {
-            switch (undoType)
+            // Right arrow advances a single command;
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
             {
-                case UndoType.Single:
-                    return true;
-                case UndoType.UntilWaitForInputCommand:
-                    return history.Peek().GetType() == typeof(WaitForInputCommand);
-                default:
-                    return false;
+                curCommand.Value.Execute(this);
+                curCommand = curCommand.Next;
             }
         }
 
-        do
+        // Process commands until wait is issued
+        while (!Waiting)
         {
-            IExecutable last = history.Pop();
-            last.Reverse(this);
-            commands.Push(last);
-        } while (!(history.Count == 0 || ShouldStop()));
+            curCommand.Value.Execute(this);
+            curCommand = curCommand.Next;
+        }
     }
 
     void BuildTests()
     {
-        commands.Push(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(3, 0)));
-        commands.Push(new WaitForInputCommand());
-        commands.Push(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
-        commands.Push(new MoveCommand("T2", Moveable.MovementType.Duration, 0.3f, new Vector2(2, 1)));
-        commands.Push(new MoveCommand("T1", Moveable.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
-        commands.Push(new WaitForInputCommand());
-        commands.Push(new SpawnCommand("T2", "Sprites/Jobs/PLD"));
-        commands.Push(new SpawnCommand("T1", "Sprites/Jobs/GNB"));
+        commands.AddLast(new SpawnCommand("T1", "Sprites/Jobs/GNB"));
+        commands.AddLast(new SpawnCommand("T2", "Sprites/Jobs/PLD"));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new MoveCommand("T1", Moveable.MovementType.Duration, 0.3f, new Vector2(-5, -1)));
+        commands.AddLast(new MoveCommand("T2", Moveable.MovementType.Duration, 0.3f, new Vector2(2, 1)));
+        commands.AddLast(new GroupCommand("tanks", new List<string>() { "T1", "T2" }));
+        commands.AddLast(new WaitForInputCommand());
+        commands.AddLast(new MoveCommand("tanks", Moveable.MovementType.Duration, 0.3f, new Vector2(3, 0)));
+        curCommand = commands.First;
     }
 
 }
