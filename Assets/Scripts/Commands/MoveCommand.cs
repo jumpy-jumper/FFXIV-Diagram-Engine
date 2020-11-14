@@ -16,19 +16,31 @@ public class MoveCommand : IExecutable
         this.target = target;
     }
 
-    public bool Execute(Level level)
+    Dictionary<Moveable, Vector2> originalPositions = new Dictionary<Moveable, Vector2>();
+    public bool Execute(Stage stage)
     {                                                                 
-        List<Actor> actors = level.GetActors(label);
+        List<Actor> actors = stage.GetActors(label);
 
         foreach (Actor actor in actors)
         {
-            Moveable moveableComponent = actor.GetComponent<Moveable>();
-            if (moveableComponent)
+            Moveable moveable = actor.GetComponent<Moveable>();
+            if (moveable)
             {
-                moveableComponent.Move(movementType, timeFactor, target);
+                originalPositions.Add(moveable, moveable.transform.position);
+                moveable.Move(movementType, timeFactor, target);
             }
         }
 
+        return true;
+    }
+
+    public bool Reverse(Stage stage)
+    {
+        foreach (Moveable moveable in originalPositions.Keys)
+        {
+            moveable.Move(Moveable.MovementType.Instant, 0, originalPositions[moveable]);
+        }
+        originalPositions.Clear();
         return true;
     }
 }

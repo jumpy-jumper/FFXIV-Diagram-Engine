@@ -15,10 +15,16 @@ public class GroupCommand : IExecutable
         this.names = names;
     }
 
-    public bool Execute(Level level)
+    public bool Execute(Stage stage)
     {
-        List<Actor> actors = level.GetActors(names);
-        level.groups.Add(label, actors);
+        List<Actor> actors = stage.GetActors(names);
+        stage.groups.Add(label, actors);
+        return true;
+    }
+
+    public bool Reverse(Stage stage)
+    {
+        stage.groups.Remove(label);
         return true;
     }
 }

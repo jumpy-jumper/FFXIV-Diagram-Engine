@@ -9,7 +9,7 @@ public class WaitForSecondsCommand : IExecutable
         seconds = 0;
     }
 
-    public bool Execute(Level level)
+    public bool Execute(Stage stage)
     {
         if (seconds == 0)
         {
@@ -17,7 +17,12 @@ public class WaitForSecondsCommand : IExecutable
             return false;
         }
 
-        level.secondsWait = seconds;
+        stage.secondsWait = seconds;
+        return true;
+    }
+
+    public bool Reverse(Stage stage)
+    {
         return true;
     }
 }

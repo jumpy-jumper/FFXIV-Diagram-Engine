@@ -1,7 +1,7 @@
 Tool to create animated FFXIV Diagrams.
-Starts with a splash screen displaying the level's name and creator.
-The user specifies multiple levels to be displayed in succession.
-The user spawns sprites and manipulates them before the level is over.
+Starts with a splash screen displaying the stage's name and creator.
+The user specifies multiple stages to be displayed in succession.
+The user spawns sprites and manipulates them before the stage is over.
 
 Commands:
 	//			comment (ignore rest of line)

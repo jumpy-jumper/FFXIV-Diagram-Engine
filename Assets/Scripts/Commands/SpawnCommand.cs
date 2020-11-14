@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 /*
- * Instantiates a new actor and adds it to the level's actor list.
+ * Instantiates a new actor and adds it to the stage's actor list.
  */
 public class SpawnCommand : IExecutable
 {
@@ -12,15 +12,24 @@ public class SpawnCommand : IExecutable
     {
         this.name = name;
         this.spritePath = spritePath;
+        obj = null;
     }
 
-    public bool Execute(Level level)
+    Actor obj;
+    public bool Execute(Stage stage)
     {
         Sprite spr = Resources.Load<Sprite>(spritePath);
-        GameObject obj = (GameObject)GameObject.Instantiate(Resources.Load("Actor"), level.transform);
+        obj = GameObject.Instantiate<Actor>(Resources.Load<Actor>("Actor"), stage.transform);
         obj.name = name;
         obj.GetComponent<SpriteRenderer>().sprite = spr;
-        level.actors.Add(obj.GetComponent<Actor>());
+        stage.actors.Add(obj.GetComponent<Actor>());
+        return true;
+    }
+
+    public bool Reverse(Stage stage)
+    {
+        stage.actors.Remove(obj);
+        GameObject.Destroy(obj.gameObject);
         return true;
     }
 }

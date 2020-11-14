@@ -1,13 +1,18 @@
 ﻿using UnityEngine;
 
 /*
- * Orders the level to wait for user input.
+ * Orders the stage to wait for user input.
  */
 public class WaitForInputCommand : IExecutable
 {
-    public bool Execute(Level level)
+    public bool Execute(Stage stage)
     {
-        level.inputWait = true;
+        stage.inputWait = true;
+        return true;
+    }
+
+    public bool Reverse(Stage stage)
+    {
         return true;
     }
 }
